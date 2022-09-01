@@ -9,6 +9,8 @@ html{
         font-size: 80%;
     }
 }
+
+
 .img-fluid{
     @include leptop{
         width:566px;
@@ -27,17 +29,54 @@ height: 56px;
 .css-1pahdxg-control{
     height: 56px;
     }
-.infocont__wrapper{
+
+.info-wrapper{
     padding: 94px 150px;
     @include leptop{
       padding: 2rem;
+      
     }
 }
 
-.infocont{
-    padding: 91px 20px;
-    @include leptop{
-      padding: 2rem;
-    }
+
+
+input[type="file"] {
+display: none;
 }
 
+.upload-wrapper{
+    border: 2px dashed #62A1EB;
+    width: 100%;
+    display: flex;
+    position: relative;
+    flex-direction: column ;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.upload-error{
+    position: absolute;
+    top: 40px;
+}
+
+.upload-text{
+    max-width: 195px;
+    color:#62A1EB;
+    text-align: center;
+margin: 100px 0px 70px;
+}
+.custom-file-upload{
+    color: white;
+    background-color:#62A1EB;
+    width:233px;
+    height:60px ;  
+    margin: 0px 0px 123px 0px;
+}
+
+
+.line{
+    height: 2px;
+    margin: 44px 0;
+    width: 100%;
+    background: #C7C7C7;
+}

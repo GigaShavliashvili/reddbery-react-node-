@@ -1,0 +1,41 @@
+   const name = /* data.name */ "გიგა";
+    const surname = /* data.lastName */ "შავლიაშვილი";
+    const team_id = 2;
+    const position_id = 3;
+    const phone_number =/*  data.phoneNumber */"+995555555555";
+    const email = /* data.email */ "shavliashvili33@redberry.ge";
+    const token = "778994d3e8b154213ad1e89cf47aed5e";
+    const laptop_name = /* leptopName */ "Asus";
+    const laptop_image = "@Screenshot 2022-08-31 142500.png";
+    const laptop_brand_id = 2222;
+    const laptop_cpu = "intell";
+    const laptop_cpu_cores = /* cpuCore */ 6;
+    const laptop_cpu_threads = /* cpuFlow */ 12;
+    const laptop_ram = /* leoptopRam */ 22;
+    const laptop_hard_drive_type = "SSD";
+    const laptop_state = "ახალი";
+    const laptop_purchase_date ="10-10-2003";
+    const laptop_price = /* leptopPrice; */ 1200; 
+
+
+
+            name, 
+        surname,
+        team_id,
+        position_id,
+        phone_number,
+        email,
+        laptop_image,
+        token,
+        laptop_name ,
+        laptop_brand_id,
+        laptop_cpu,
+        laptop_cpu_cores,
+        laptop_cpu_threads,
+        laptop_ram,
+        laptop_hard_drive_type,
+        laptop_state,
+        laptop_purchase_date,
+        laptop_price,
+
+response: "{\"message\":\"The laptop image must be an image.\",\"errors\":{\"laptop_image\":[\"The laptop image must be an image.\"]}}"
