@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { Button } from "./Buttons";
+import {Link} from "react-router-dom"
 import TextField from "@mui/material/TextField";
 import { useForm, Controller } from "react-hook-form";
 import Select from "react-select";
 import { useNavigate } from "react-router";
-import Radio from "@mui/material/Radio";
 import axios from "axios";
+
 const LeptopInfo = () => {
   const [data, setData] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
   const [uploadError, setUploadError] = useState(false);
   const [memoryType, setMemoryType] = useState(null);
   const [condition, setCondition] = useState(null);
+  const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
   const {
@@ -65,24 +67,59 @@ const LeptopInfo = () => {
     leptopPrice,
     purchaseDate,
   }) => {
-
-    console.log("occuredddddddddd");
-
-
-    const data ={name :"გიგა",  surname:"შავლიაშვილი",team_id:1, position_id:1,phone_number:"+995555555555", email:"shavliashvili33@redberry.ge",token:"778994d3e8b154213ad1e89cf47aed5e",laptop_name: "Asus",laptop_image :selectedImage,
-    laptop_brand_id:1,laptop_cpu:"Intel Core i3",laptop_cpu_cores:3,laptop_cpu_threads:12,laptop_ram:22,laptop_hard_drive_type:"SSD",laptop_state:"new", laptop_price:2000 }
-
+    const data = {
+      name: "გიგა",
+      surname: "შავლიაშვილი",
+      team_id: 1,
+      position_id: 1,
+      phone_number: "+995555555555",
+      email: "shavliashvili33@redberry.ge",
+      token: "23bf880685353b8b80913bfa7e38c4bf",
+      laptop_name: "Asus",
+      laptop_image: selectedImage,
+      laptop_brand_id: 1,
+      laptop_cpu: "Intel Core i3",
+      laptop_cpu_cores: 3,
+      laptop_cpu_threads: 12,
+      laptop_ram: 22,
+      laptop_hard_drive_type: "SSD",
+      laptop_state: "new",
+      laptop_price: 2000,
+    };
 
     axios({
       method: "POST",
       url: "https://pcfy.redberryinternship.ge/api/laptop/create",
-      data: data
-    }).then((res) =>{
-      console.log(res);
-    }).catch((err) =>{
-      console.log(err);
+      data: data,
+      headers: {
+        "Content-Type": "multipart/form-data",
+        accept: "application/json ",
+      },
     })
+      .then((res) => {
+        Cookies.remove("employeeInfo")
+        Cookies.remove("leptopInfo")
+        setSuccess(true)
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
+
+
+  if(success){
+    return <div className="success-wrapper" >
+      <div className="success">
+        <img  src="/Frame.png"   alt="succes img" />
+        <h5>ჩანაწერი დამატებულია</h5>
+        <Link to="/">
+        <Button width="297px" text="სიაში გდაყვანა" />
+        </Link>
+        <Link className="mt-4" style={{color:"#62A1EB"}} to="/">მთავარი</Link>
+      </div>
+    </div>
+  }
 
   return (
     <div
@@ -109,7 +146,7 @@ const LeptopInfo = () => {
                 <div className="upload-wrapper">
                   {errors.exampleRequired && (
                     <div className="upload-error">
-                      <img src="/Vector.png" alt="error icon" />
+                      <img src="/Vector.png" alt="error icon" className="img-fluid" />
                     </div>
                   )}
                   <p
@@ -130,9 +167,9 @@ const LeptopInfo = () => {
                     type="file"
                     id="file-upload"
                     name="myImage"
-                    onChange={(event) => {
-                      console.log(event.target.files[0]);
-                      setSelectedImage(event.target.files[0]);
+                    onChange={(e) => {
+                      /*   uploadImage(e) */
+                      setSelectedImage(e.target.files[0]);
                     }}
                   />
                 </div>
@@ -142,6 +179,7 @@ const LeptopInfo = () => {
                     alt="not fount"
                     className="img-fluid "
                     src={URL.createObjectURL(selectedImage)}
+                    /*     src={selectedImage}  */
                   />
                   <div className="d-flex w-100 justify-content-end">
                     <div className="mt-3 w-100" style={{ maxWidth: "233px" }}>
