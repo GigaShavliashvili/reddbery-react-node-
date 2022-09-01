@@ -1,0 +1,40 @@
+
+
+$mobile-width: 480px;
+$tablet-width: 768px;
+$tablet-l-width: 1024px;
+$leptop-width: 1368px;
+$leptop-l-width: 1920px;
+@mixin mobile {
+  @media only screen and (max-width: $mobile-width) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media only screen and (max-width: $tablet-width) {
+    @content;
+  }
+}
+
+@mixin tablet-l {
+  @media only screen and (max-width: $tablet-l-width) {
+    @content;
+  }
+}
+
+
+@mixin leptop {
+    @media only screen and (max-width: $leptop-width) {
+      @content;
+    }
+  }
+  
+
+  @mixin leptop-l {
+    @media only screen and (max-width: $leptop-l-width) {
+      @content;
+    }
+  }
+  
+  

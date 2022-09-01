@@ -1,0 +1,43 @@
+@use "./_breakpoints" as *;
+
+
+html{
+    @include  tablet{
+        font-size: 85%;
+    }
+    @include  mobile{
+        font-size: 80%;
+    }
+}
+.img-fluid{
+    @include leptop{
+        width:566px;
+    }
+}
+
+label{
+    font-weight: bold;
+    margin-bottom: 3px;
+}
+
+.css-1s2u09g-control{
+height: 56px;
+}
+
+.css-1pahdxg-control{
+    height: 56px;
+    }
+.infocont__wrapper{
+    padding: 94px 150px;
+    @include leptop{
+      padding: 2rem;
+    }
+}
+
+.infocont{
+    padding: 91px 20px;
+    @include leptop{
+      padding: 2rem;
+    }
+}
+
