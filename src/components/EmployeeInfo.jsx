@@ -84,7 +84,6 @@ useFormPersist("", { watch, setValue }); */
   return (
     <div
       className="rounded-4 h-100 mb-5 info-wrapper"
-      style={{ backgroundColor: "white", borderRadius: "18px" }}
     >
       <form
         className="h-100"

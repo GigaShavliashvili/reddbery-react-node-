@@ -66,7 +66,7 @@ const LeptopDetails = () => {
             <PageHeader text="ლეპტოპის ინფო" />
 
             {!isLoading ? <div className='mt-5'>
-                <div className='row justify-center-around '>
+                <div className='row justify-content-center'>
                     <div className='col-12 col-md-6 mb-3 detail-page-leptop-img-wrapper'>
                         <img src={baseUrl(laptop.image)} alt="" />
                     </div>
@@ -78,7 +78,7 @@ const LeptopDetails = () => {
                 <div className='row justify-center-around'>
                     <div className='col-12 col-md-6'>
                         <List title={laptopBasicInfoTitle} info={[laptop.name,
-                        leptopBrand[0].name,
+                        leptopBrand[0]?.name,
                         laptop.ram, laptop.hard_drive_type]
                         } />
                     </div>

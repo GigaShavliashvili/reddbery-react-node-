@@ -34,7 +34,7 @@ const LeptopList = () => {
 
         <PageHeader text="ჩანაწერების სია" />
 
-      <div className="row justify-content-around ">
+      <div className="row justify-content-around leptopList-wrapper">
         {leptopList.length > 0 ? (
           leptopList.map((item) => {
             return (

@@ -128,8 +128,8 @@ console.log();
       <div className="success">
         <img src="/Frame.png" alt="succes img" />
         <h5>ჩანაწერი დამატებულია</h5>
-        <Link to="/">
-          <Button width="297px" text="სიაში გდაყვანა" />
+        <Link to="/leptops" className="text-center w-100">
+          <Button text="სიაში გდაყვანა" width="287px"  />
         </Link>
         <Link className="mt-4" style={{ color: "#62A1EB" }} to="/">მთავარი</Link>
       </div>
@@ -139,7 +139,6 @@ console.log();
   return (
     <div
       className="rounded-4 h-100 mb-4 info-wrapper"
-      style={{ backgroundColor: "white", borderRadius: "18px" }}
     >
       <form
         className="h-100"
@@ -159,6 +158,12 @@ console.log();
             >
               {!selectedImage ? (
                 <div className="upload-wrapper">
+                     <label
+                    className="border-0  text-light text-center pt-3 pb-3 rounded-1 custom-file-uploadforMobile"
+                    htmlFor="file-upload"
+                  >
+                    <img src="/Upload.png" alt="" />
+                  </label>
                   {errors.exampleRequired && (
                     <div className="upload-error">
                       <img src="/Vector.png" alt="error icon" />
@@ -185,27 +190,40 @@ console.log();
                     onChange={(e) => {
                       /*   uploadImage(e) */
                       setSelectedImage(e.target.files[0]);
+                      console.log(e.target.files[0]);
                     }}
                   />
                 </div>
               ) : (
                 <div>
+                  <div className="imageFit"> 
                   <img
                     alt="not fount"
                     className="img-fluid "
                     src={URL.createObjectURL(selectedImage)}
                   /*     src={selectedImage}  */
                   />
-                  <div className="d-flex w-100 justify-content-end">
-                    <div className="mt-3 w-100" style={{ maxWidth: "233px" }}>
+                  </div>
+                  <div className="w-100 mt-4">
+                    <div className="mt-3 d-flex justify-content-between gap-3 w-100" >
+                      <div className="d-flex align-items-center " >
+                <img src="/SuccessUpload.png" className="" alt="" />
+                <div className="row ">
+                <span className="ms-2 col-md-5 col-12">{selectedImage.name.slice(0, 10)}... 
+                </span>
+                <span className="col-md-5 col-12 ms-3" style={{color:"gray", fontSize:"14px"}}>{Math.floor(selectedImage.size/10000)} mb</span>
+                </div>
+                </div>
                       <Button
                         text="თავიდან ატვირთვა"
+                        width={"233px"}
                         press={() => setSelectedImage(null)}
                       >
                         Remove
                       </Button>
+                      </div>
                     </div>
-                  </div>
+             
                 </div>
               )}
             </div>

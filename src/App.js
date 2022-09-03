@@ -9,7 +9,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 const App = () => {
   return (
-    <div className="container ps-3 pe-3">
+    <div className="container">
       <BrowserRouter>
         <Routes>
           <Route path={ROUTER.HOME} element={<Home />} />

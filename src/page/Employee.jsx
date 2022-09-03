@@ -16,7 +16,7 @@ const Employee = () => {
     },[]) */
 
   return (
-    <div className='container infocont__wrapper h-100 d-flex flex-column ' >
+    <div className='infocont__wrapper h-100 d-flex flex-column ' >
       <div className='d-flex justify-content-center w-100  mt-4 mb-3'>
         <div className='forPc  justify-content-center gap-5'>
           <ButtonWithoutBg text="თანამშრომლების ინფო" active={category === "employeeInfo" ? true : false} />
