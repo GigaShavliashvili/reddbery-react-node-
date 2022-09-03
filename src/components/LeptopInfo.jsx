@@ -1,22 +1,26 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { Button } from "./Buttons";
-import {Link} from "react-router-dom"
+import { Link } from "react-router-dom"
 import TextField from "@mui/material/TextField";
 import { useForm, Controller } from "react-hook-form";
-import Select from "react-select";
 import { useNavigate } from "react-router";
 import axios from "axios";
-
+import { useSelector, useDispatch } from "react-redux"
+import { fetchBrandsData, fetchCpusData } from "../fetchData/fetchGeneralData";
 const LeptopInfo = () => {
-  const [data, setData] = useState([]);
+  const [employeeInfo, setEmployeeInfo] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [uploadError, setUploadError] = useState(false);
+
   const [memoryType, setMemoryType] = useState(null);
   const [condition, setCondition] = useState(null);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
+  const dispatch = useDispatch()
+  const { brand, cpus } = useSelector((state) => state.generalData)
+
+  console.log(brand);
   const {
     handleSubmit,
     control,
@@ -25,6 +29,15 @@ const LeptopInfo = () => {
     register,
     formState: { errors },
   } = useForm({});
+
+console.log();
+
+  useEffect(() => {
+    dispatch(fetchBrandsData())
+    dispatch(fetchCpusData())
+  }, [])
+
+
 
   useEffect(() => {
     const subscription = watch((value) => {
@@ -52,10 +65,9 @@ const LeptopInfo = () => {
     const employeeInfo = Cookies.get("employeeInfo")
       ? JSON.parse(Cookies.get("employeeInfo"))
       : null;
-    console.log(employeeInfo);
     if (employeeInfo) {
-      setData(employeeInfo);
-      console.log(employeeInfo); //If  user has not filled employeeInfo, he navigate to employeeinfo page
+      setEmployeeInfo(employeeInfo);
+     //If  user has not filled employeeInfo, he navigate to employeeinfo page
     } else navigate("/info/employeeInfo");
   }, []);
 
@@ -65,35 +77,38 @@ const LeptopInfo = () => {
     leoptopRam,
     leptopName,
     leptopPrice,
+    CPU,
+    brand,
     purchaseDate,
   }) => {
+
     const data = {
-      name: "გიგა",
-      surname: "შავლიაშვილი",
-      team_id: 1,
-      position_id: 1,
-      phone_number: "+995555555555",
-      email: "shavliashvili33@redberry.ge",
+      name: employeeInfo.name,
+      surname: employeeInfo.lastName,
+      team_id: employeeInfo.team,
+      position_id: employeeInfo.possition,
+      phone_number: employeeInfo.phoneNumber,
+      email: employeeInfo.email,
       token: "23bf880685353b8b80913bfa7e38c4bf",
-      laptop_name: "Asus",
+      laptop_name: leptopName,
       laptop_image: selectedImage,
-      laptop_brand_id: 1,
-      laptop_cpu: "Intel Core i3",
-      laptop_cpu_cores: 3,
-      laptop_cpu_threads: 12,
-      laptop_ram: 22,
-      laptop_hard_drive_type: "SSD",
-      laptop_state: "new",
-      laptop_price: 2000,
+      laptop_brand_id: brand,
+      laptop_cpu: CPU,
+      laptop_cpu_cores: cpuCore,
+      laptop_cpu_threads: cpuFlow,
+      laptop_ram:leoptopRam,
+      laptop_hard_drive_type:  memoryType,
+      laptop_state: condition,
+      laptop_price: leptopPrice,
+      laptop_purchase_date:  purchaseDate,
     };
 
-    axios({
+   axios({
       method: "POST",
       url: "https://pcfy.redberryinternship.ge/api/laptop/create",
       data: data,
       headers: {
         "Content-Type": "multipart/form-data",
-        accept: "application/json ",
       },
     })
       .then((res) => {
@@ -104,26 +119,26 @@ const LeptopInfo = () => {
       })
       .catch((err) => {
         console.log(err);
-      });
+      }); 
   };
 
 
-  if(success){
+  if (success) {
     return <div className="success-wrapper" >
       <div className="success">
-        <img  src="/Frame.png"   alt="succes img" />
+        <img src="/Frame.png" alt="succes img" />
         <h5>ჩანაწერი დამატებულია</h5>
         <Link to="/">
-        <Button width="297px" text="სიაში გდაყვანა" />
+          <Button width="297px" text="სიაში გდაყვანა" />
         </Link>
-        <Link className="mt-4" style={{color:"#62A1EB"}} to="/">მთავარი</Link>
+        <Link className="mt-4" style={{ color: "#62A1EB" }} to="/">მთავარი</Link>
       </div>
     </div>
   }
 
   return (
     <div
-      className="rounded-1 h-100 mb-5 info-wrapper"
+      className="rounded-4 h-100 mb-4 info-wrapper"
       style={{ backgroundColor: "white", borderRadius: "18px" }}
     >
       <form
@@ -133,7 +148,7 @@ const LeptopInfo = () => {
       >
         <div className="d-flex flex-column h-100 w-100 justify-content-between ">
           <div className="row">
-            {/* imageeee */}
+            {/* imageeee uploader*/}
             <div
               className="d-flex justify-content-center align-center mb-5 p-0"
               style={
@@ -146,7 +161,7 @@ const LeptopInfo = () => {
                 <div className="upload-wrapper">
                   {errors.exampleRequired && (
                     <div className="upload-error">
-                      <img src="/Vector.png" alt="error icon" className="img-fluid" />
+                      <img src="/Vector.png" alt="error icon" />
                     </div>
                   )}
                   <p
@@ -157,7 +172,7 @@ const LeptopInfo = () => {
                   </p>
                   <label
                     className="border-0  text-light text-center pt-3 pb-3 rounded-1 custom-file-upload"
-                    for="file-upload"
+                    htmlFor="file-upload"
                   >
                     ატვირთე
                   </label>
@@ -179,7 +194,7 @@ const LeptopInfo = () => {
                     alt="not fount"
                     className="img-fluid "
                     src={URL.createObjectURL(selectedImage)}
-                    /*     src={selectedImage}  */
+                  /*     src={selectedImage}  */
                   />
                   <div className="d-flex w-100 justify-content-end">
                     <div className="mt-3 w-100" style={{ maxWidth: "233px" }}>
@@ -202,7 +217,6 @@ const LeptopInfo = () => {
               <Controller
                 name="leptopName"
                 control={control}
-                defaultValue=""
                 rules={{
                   required: true,
                   pattern: /^[A-ZA-A]/,
@@ -214,7 +228,7 @@ const LeptopInfo = () => {
                     defaultValue=""
                     sx={{
                       "& legend": { display: "none" },
-                      "& fieldset": { top: 0 },
+                      "& fieldset": { top: 0, border: "2px solid #8AC0E2" },
                     }}
                     inputProps={{ type: "leptopName" }}
                     error={Boolean(errors.leptopName)}
@@ -231,27 +245,26 @@ const LeptopInfo = () => {
               ></Controller>
             </div>
 
-            {/* select your team */}
+            {/* select Leptop Brand */}
             <div className="col-12 col-md-6 mt-1 ">
               <div className="h-100 pt-4 pb-4">
                 <Controller
-                  name="team"
+                  name="brand"
                   control={control}
                   rules={{
                     required: true,
                   }}
                   render={({ field }) => (
-                    <Select
-                      required
-                      name="team"
-                      placeholder="ლეპტოპის ბრენდი"
+                    <select
+                      name="brand"
                       {...field}
-                      options={[
-                        { value: "chocolate", label: "Chocolate" },
-                        { value: "strawberry", label: "Strawberry" },
-                        { value: "vanilla", label: "Vanilla" },
-                      ]}
-                    />
+                    >
+                      <option value="">ლეპტოპის ბრენდი</option>
+                      {brand?.map((el) => (
+                        <option key={el.id} value={el.id} >
+                          {el.name}
+                        </option>))}
+                    </select>
                   )}
                 />
               </div>
@@ -261,27 +274,26 @@ const LeptopInfo = () => {
           <span className="line"></span>
 
           <div className="row">
-            {/* select your team */}
+            {/* select your CPU */}
             <div className="col-12 col-md-4 mt-1 mt-4">
               <div className="h-100 pt-4 pb-4">
                 <Controller
-                  name="team"
+                  name="CPU"
                   control={control}
                   rules={{
                     required: true,
                   }}
                   render={({ field }) => (
-                    <Select
-                      required
-                      name="team"
-                      placeholder="CPU"
+                    <select
+                      name="CPU"
                       {...field}
-                      options={[
-                        { value: "chocolate", label: "Chocolate" },
-                        { value: "strawberry", label: "Strawberry" },
-                        { value: "vanilla", label: "Vanilla" },
-                      ]}
-                    />
+                    >
+                      <option value="">CPU</option>
+                      {cpus?.map((el) => (
+                        <option key={el.id} value={el.name} >
+                          {el.name}
+                        </option>))}
+                    </select>
                   )}
                 />
               </div>
@@ -292,7 +304,6 @@ const LeptopInfo = () => {
               <Controller
                 name="cpuCore"
                 control={control}
-                defaultValue=""
                 rules={{
                   required: true,
                   maxLength: 12,
@@ -306,7 +317,7 @@ const LeptopInfo = () => {
                     defaultValue=""
                     sx={{
                       "& legend": { display: "none" },
-                      "& fieldset": { top: 0 },
+                      "& fieldset": { top: 0, border: "2px solid #8AC0E2" },
                     }}
                     inputProps={{ type: "cpuCore" }}
                     error={Boolean(errors.cpuCore)}
@@ -328,7 +339,6 @@ const LeptopInfo = () => {
               <Controller
                 name="cpuFlow"
                 control={control}
-                defaultValue=""
                 rules={{
                   required: true,
 
@@ -341,7 +351,7 @@ const LeptopInfo = () => {
                     defaultValue=""
                     sx={{
                       "& legend": { display: "none" },
-                      "& fieldset": { top: 0 },
+                      "& fieldset": { top: 0, border: "2px solid #8AC0E2" },
                     }}
                     inputProps={{ type: "cpuFlow" }}
                     error={Boolean(errors.cpuFlow)}
@@ -363,7 +373,6 @@ const LeptopInfo = () => {
               <Controller
                 name="leoptopRam"
                 control={control}
-                defaultValue=""
                 rules={{
                   required: true,
                   pattern: /[0-9]/,
@@ -375,7 +384,7 @@ const LeptopInfo = () => {
                     defaultValue=""
                     sx={{
                       "& legend": { display: "none" },
-                      "& fieldset": { top: 0 },
+                      "& fieldset": { top: 0, border: "2px solid #8AC0E2" },
                     }}
                     inputProps={{ type: "name" }}
                     error={Boolean(errors.leoptopRam)}
@@ -393,10 +402,10 @@ const LeptopInfo = () => {
             </div>
             {/*   Memory type */}
             <div className="col-12 col-md-4 mt-4">
-              <label htmlFor="">მეხსიერების ტიპი</label>
+              <label htmlFor="" style={errors.memoryType&& { color: "red" }}>მეხსიერების ტიპი  {errors.memoryType&& <img src="/Vector.png" alt="error icon" className="error-img" />}</label>
               <div className="d-flex justify-content-around mt-3">
                 <div className="form-check">
-                  <label htmlFor="radio" for="flexRadioDefault1">
+                  <label htmlFor="flexRadioDefault1" >
                     <input
                       {...register("memoryType", { required: true })}
                       type="radio"
@@ -410,7 +419,7 @@ const LeptopInfo = () => {
                   </label>
                 </div>
                 <div className="form-check">
-                  <label htmlFor="radio2" for="flexRadioDefault2">
+                  <label htmlFor="flexRadioDefault2" >
                     <input
                       {...register("memoryType", { required: true })}
                       type="radio"
@@ -429,13 +438,11 @@ const LeptopInfo = () => {
             <span className="line"></span>
 
             {/*  Pirchase Date */}
-
             <div className="col-12 col-md-6 mt-4">
               <label htmlFor="">შეძენის რიცხვი (არჩევით)</label>
               <Controller
                 name="purchaseDate"
                 control={control}
-                defaultValue=""
                 rules={{
                   required: false,
                   pattern: /[0-31]+[0-12]+[0-2023]/,
@@ -448,7 +455,7 @@ const LeptopInfo = () => {
                     placeholder="დდ/ თთ / წწ"
                     sx={{
                       "& legend": { display: "none" },
-                      "& fieldset": { top: 0 },
+                      "& fieldset": { top: 0, border: "2px solid #8AC0E2" },
                     }}
                     inputProps={{ type: "date" }}
                     error={Boolean(errors.purchaseDate)}
@@ -471,7 +478,6 @@ const LeptopInfo = () => {
               <Controller
                 name="leptopPrice"
                 control={control}
-                defaultValue="00000"
                 rules={{
                   required: true,
                   pattern: /[0-9]/,
@@ -480,10 +486,10 @@ const LeptopInfo = () => {
                   <TextField
                     style={{ width: "100%" }}
                     id="leptopPrice"
-                    defaultValue=""
+                    defaultValue="00000"
                     sx={{
                       "& legend": { display: "none" },
-                      "& fieldset": { top: 0 },
+                      "& fieldset": { top: 0, border: "2px solid #8AC0E2" },
                     }}
                     inputProps={{ type: "number" }}
                     error={Boolean(errors.leptopPrice)}
@@ -500,32 +506,34 @@ const LeptopInfo = () => {
               ></Controller>
             </div>
 
+        {/* leptop copndition */}
             <div className="col-12 col-md-4 mt-4">
-              <label htmlFor="">ლეპტოპის მდგომარეობა</label>
+              <label htmlFor="" style={errors.condition && { color: "red" }}>ლეპტოპის მდგომარეობა 
+              {errors.condition && <img src="/Vector.png" alt="error icon" className="error-img" />} </label>
               <div className="d-flex justify-content-around mt-3">
                 <div className="form-check">
-                  <label htmlFor="radio3" for="flexRadioDefault3">
+                  <label htmlFor="flexRadioDefault3" >
                     <input
                       {...register("condition", { required: true })}
                       type="radio"
                       onChange={(e) => setCondition(e.target.value)}
-                      name="flexRadioDefault3"
+                      name="flexRadioDefault2"
                       id="flexRadioDefault3"
-                      value="ახალი"
+                      value="new"
                       className="form-check-input"
                     />{" "}
                     ახალი
                   </label>
                 </div>
                 <div className="form-check">
-                  <label htmlFor="radio4" for="flexRadioDefault4">
+                  <label htmlFor="flexRadioDefault4">
                     <input
                       {...register("condition", { required: true })}
                       type="radio"
-                      value="მეორადი"
+                      value="used"
                       onChange={(e) => setCondition(e.target.value)}
                       className="form-check-input"
-                      name="flexRadioDefault4"
+                      name="flexRadioDefault2"
                       id="flexRadioDefault4"
                     />{" "}
                     მეორადი
@@ -535,7 +543,7 @@ const LeptopInfo = () => {
             </div>
           </div>
 
-          <div className="d-flex mt-2 justify-content-end">
+          <div className="d-flex mt-4 justify-content-end">
             <Button text="შემდეგი" width="174px" />
           </div>
         </div>

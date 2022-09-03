@@ -3,11 +3,19 @@ import { Button } from "./Buttons";
 import TextField from "@mui/material/TextField";
 import Cookies from "js-cookie";
 import { useForm, Controller } from "react-hook-form";
-import Select from "react-select";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux"
+import { fetchTeamsData, fetchPositionData } from "../fetchData/fetchGeneralData";
 
 const EmployeeInfo = () => {
+  const [teamId, setTeamId] = useState(null)
+
+  const dispatch = useDispatch()
+
+  const { teams, position } = useSelector((state) => state.generalData)
+
   const navigate = useNavigate();
+
   const {
     handleSubmit,
     control,
@@ -16,14 +24,25 @@ const EmployeeInfo = () => {
     formState: { errors },
   } = useForm({});
 
+
+  useEffect(() => {
+    dispatch(fetchTeamsData())
+    dispatch(fetchPositionData())
+  }, [])
+
+
   useEffect(() => {
     const subscription = watch((value) => {
       Cookies.set("employeeInfo", JSON.stringify(value));
+      setTeamId(value.team)
     });
     return () => subscription.unsubscribe();
   }, []);
 
+
+  console.log(teamId);
   useEffect(() => {
+
     const info = Cookies.get("employeeInfo")
       ? JSON.parse(Cookies.get("employeeInfo"))
       : null;
@@ -64,7 +83,7 @@ useFormPersist("", { watch, setValue }); */
 
   return (
     <div
-      className="rounded-1 h-100 mb-5 info-wrapper"
+      className="rounded-4 h-100 mb-5 info-wrapper"
       style={{ backgroundColor: "white", borderRadius: "18px" }}
     >
       <form
@@ -74,7 +93,7 @@ useFormPersist("", { watch, setValue }); */
       >
         <div className="d-flex flex-column h-100 w-100 justify-content-between ">
           <div className="row">
-            {/*name */}
+            {/*user name */}
             <div className="col-12 col-md-6">
               <label htmlFor="">სახელი</label>
               <Controller
@@ -91,12 +110,11 @@ useFormPersist("", { watch, setValue }); */
                   <TextField
                     style={{ width: "100%" }}
                     id="name "
-                    defaultValue="Small"
                     sx={{
-                      "& legend": { display: "none" },
-                      "& fieldset": { top: 0 },
+                      "& legend": { display: "none"},
+                      "& fieldset": { top: 0,border: "2px solid #8AC0E2" },
                     }}
-                    inputProps={{ type: "name" }}
+                    inputProps={{ type: "name" }} 
                     error={Boolean(errors.name)}
                     helperText={
                       errors.name
@@ -104,8 +122,8 @@ useFormPersist("", { watch, setValue }); */
                           ? "გამოიყენეთ ქართული ასობეი"
                           : errors.name.type === "maxLength" ||
                             errors.name.type === "minLength"
-                          ? "სახელი უნდა შეიცავდეს 2 დან 12 სიმბოლომდე."
-                          : "მიუთითეთ თქვენი სახელი"
+                            ? "სახელი უნდა შეიცავდეს 2 დან 12 სიმბოლომდე."
+                            : "მიუთითეთ თქვენი სახელი"
                         : "მინიმუმ 2 სიმბოლო, ქართული ასოები"
                     }
                     {...field}
@@ -131,10 +149,9 @@ useFormPersist("", { watch, setValue }); */
                   <TextField
                     style={{ width: "100%" }}
                     id="lastName"
-                    defaultValue="Small"
                     sx={{
                       "& legend": { display: "none" },
-                      "& fieldset": { top: 0 },
+                      "& fieldset": { top: 0,border: "2px solid #8AC0E2" },
                     }}
                     inputProps={{ type: "lastName" }}
                     error={Boolean(errors.lastName)}
@@ -144,8 +161,8 @@ useFormPersist("", { watch, setValue }); */
                           ? "გამოიყენეთ ქართული ასობეი"
                           : errors.lastName.type === "maxLength" ||
                             errors.lastName.type === "minLength"
-                          ? "გვარი უნდა შეიცავდეს 2 დან 12 სიმბოლომდე."
-                          : "მიუთითეთ თქვენი გვარი"
+                            ? "გვარი უნდა შეიცავდეს 2 დან 12 სიმბოლომდე."
+                            : "მიუთითეთ თქვენი გვარი"
                         : "მინიმუმ 2 სიმბოლო, ქართული ასოები"
                     }
                     {...field}
@@ -156,7 +173,7 @@ useFormPersist("", { watch, setValue }); */
           </div>
 
           {/* select your team */}
-          <div className="mt-2">
+          <div className="mt-4">
             <Controller
               name="team"
               control={control}
@@ -164,47 +181,49 @@ useFormPersist("", { watch, setValue }); */
                 required: true,
               }}
               render={({ field }) => (
-                <Select
-                  required
+                <select
                   name="team"
-                  placeholder="თიმი"
                   {...field}
-                  options={[
-                    { value: "chocolate", label: "Chocolate" },
-                    { value: "strawberry", label: "Strawberry" },
-                    { value: "vanilla", label: "Vanilla" },
-                  ]}
-                />
+                >
+                  <option value="">თიმი</option>
+                  {teams?.map((el) => (
+                    <option key={el.id} value={el.id} >
+                      {el.name}
+                    </option>))}
+                </select>
               )}
             />
           </div>
 
           {/* select your possition */}
-          <div className="mt-2">
+          <div className="mt-4">
             <Controller
               name="possition"
               control={control}
               rules={{
                 required: true,
               }}
+
               render={({ field }) => (
-                <Select
-                  required
-                  name="possition"
-                  placeholder="პოზიცია"
+                <select
+                  name="position"
                   {...field}
-                  options={[
-                    { value: "chocolate", label: "Chocolate" },
-                    { value: "strawberry", label: "Strawberry" },
-                    { value: "vanilla", label: "Vanilla" },
-                  ]}
-                />
+                >
+                  <option value="">პოზიცია</option>
+
+                  {position?.filter(el => el.team_id === +teamId).map((el) => {
+                    console.log(el);
+                    return <option value={el.id}>{el.name}</option>
+                  })
+
+                  }
+                </select>
               )}
             />
           </div>
 
           {/*mail*/}
-          <div className="mt-2">
+          <div className="mt-4">
             <label htmlFor="">მეილი</label>
             <Controller
               name="email"
@@ -221,7 +240,7 @@ useFormPersist("", { watch, setValue }); */
                   variant="outlined"
                   sx={{
                     "& legend": { display: "none" },
-                    "& fieldset": { top: 0 },
+                    "& fieldset": { top: 0,border: "2px solid #8AC0E2" },
                   }}
                   inputProps={{ type: "email" }}
                   error={Boolean(errors.email)}
@@ -239,7 +258,7 @@ useFormPersist("", { watch, setValue }); */
           </div>
 
           {/* phoneNumbers */}
-          <div className="mt-2">
+          <div className="mt-4">
             <label htmlFor="">ტელეფონის ნომერი</label>
             <Controller
               name="phoneNumber"
@@ -258,7 +277,7 @@ useFormPersist("", { watch, setValue }); */
                   placeholder="+995 5__ __ __ __"
                   sx={{
                     "& legend": { display: "none" },
-                    "& fieldset": { top: 0 },
+                    "& fieldset": { top: 0,border: "2px solid #8AC0E2" },
                   }}
                   inputProps={{ type: "phoneNumber" }}
                   error={Boolean(errors.phoneNumber)}
@@ -275,7 +294,7 @@ useFormPersist("", { watch, setValue }); */
             ></Controller>
           </div>
 
-          <div className="d-flex mt-2 justify-content-end">
+          <div className="d-flex mt-4 justify-content-end">
             <Button text="შემდეგი" width="174px" />
           </div>
         </div>

@@ -18,11 +18,28 @@ body{
 }
 .container{
     min-height: 100vh;
+    @include mobile{
+        --bs-gutter-x: 0;
+    }
 }
 
 .img-fluid{
     @include leptop{
         width:566px;
+    }
+}
+
+.forPc{
+    display: flex;
+    @include tablet {
+        display: none;
+    }
+}
+
+.forMobile{
+    display: none;
+    @include tablet{
+        display: flex;
     }
 }
 
@@ -88,6 +105,11 @@ margin: 100px 0px 70px;
     margin: 44px 0;
     width: 100%;
     background: #C7C7C7;
+    display: block;
+
+    @include tablet{
+         display: none;
+    }
 }
 
 
@@ -124,3 +146,44 @@ margin: 100px 0px 70px;
     }
 }
 
+.detail-page-leptop-img-wrapper{
+width: 577px;
+height: 342px;
+img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+}
+
+select{
+    width: 100%;
+    height: 60px;
+    border:none;
+    border-radius:10px ;
+    padding: 5px;
+    background-color: #EBEBEB;
+    outline-color:#8AC0E2 ;
+    option{
+        padding: 5px;
+        margin-top: 10px;
+    }
+}
+
+.form-check-input {
+  border:2px solid #8AC0E2
+}
+
+.error-img{
+    width: 22px;
+    height: 20px;
+    margin-left: 10px;
+    margin-bottom: 5px;
+}
+
+
+.RedberrLogo{
+    @include tablet{
+        display: none;
+    }
+}

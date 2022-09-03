@@ -2,12 +2,15 @@ import Cookies from 'js-cookie';
 import React, { useEffect } from 'react'
 import {Link} from "react-router-dom"
 import {Button} from "../components/Buttons"
+
+
 const Home = () => {
 
-  const doit = () => {
-    console.log("onPress");
-  }
-
+ 
+    
+    const doit = () => {
+      console.log("onPress");
+    }
   return (
     <div className='container d-flex h-100  align-center flex-column homepage' >
       <div className="text-center m-auto">
@@ -23,7 +26,7 @@ const Home = () => {
       </Link>
       </div>
       <div className='text-center mt-3'>
-      <Link to="Info/leptopInfo">
+      <Link to="/leptops">
       <Button text="ჩანაწერების სია"  press={doit} width="387px"/>
       </Link>
       </div>
