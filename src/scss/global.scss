@@ -1,9 +1,18 @@
 @use "./_breakpoints" as *;
 
 
+
+@font-face {
+    font-family: 'Helvetica Neue';
+    src: url('../assets/fonts/HelveticaNeue.ttc');
+}
+
+// Genneral 
+
 html{
   
     --bs-gutter-x: 0;
+    
 }
 
 a{
@@ -13,12 +22,17 @@ body{
     font-family: "Helvetica Neue";
     background: #F6F6F6;
 }
+
+
+// main container 
 .container{
     min-height: 100vh;
     @include mobile{
-     
+        padding:0
     }
 }
+
+// landing page image
 
 .homeImage{
     @include leptop{
@@ -38,15 +52,32 @@ body{
 }
 
 .imageFit{
-    max-height: 423px;
-    object-fit: cover;
+    width:878px;
+   height: 423px;
+
     overflow: hidden;
     border-radius: 20px;
+    object-fit:cover;
+    object-position: center center;
+
+@include tablet-l{
+    width: 558px;
+    height: 281px;
+}
+
     @include tablet{
         width: 358px;
         height: 181px;
     }
+
+    img{
+        width: 100%;
+        height: 100%;
+    }
 }
+
+
+//information header for pc and for mobile
 
 .forPc{
     display: flex;
@@ -61,6 +92,9 @@ body{
         display: flex;
     }
 }
+
+
+ //employee info
 
 label{
     font-weight: bold;
@@ -86,9 +120,47 @@ height: 56px;
 
 
 
+//information inputs Style during success and error
+
 input[type="file"] {
 display: none;
 }
+
+.input-error{
+
+
+    input{
+        border: 2px solid #8AC0E2;
+        border-radius: 8px;
+        padding: 16px;
+        height: 57px;
+        outline-color:#6499FF;
+    }
+    span{
+        font-size: 13px;
+        color:#2E2E2E;
+    }
+    
+ 
+}
+.active{
+label{
+    color:#E52F2F 
+}
+    input{
+        border: 2px solid #E52F2F;
+        outline:none;
+    }
+    span{
+        color:#E52F2F
+    }
+}
+
+
+
+
+
+// for img upload Section
 
 .upload-wrapper{
     border: 2px dashed #62A1EB;
@@ -141,6 +213,8 @@ margin: 100px 0px 70px;
     }
 }
 
+
+
 .line{
     height: 2px;
     margin: 44px 0;
@@ -153,6 +227,7 @@ margin: 100px 0px 70px;
     }
 }
 
+  // after upload your info, success page
 
 .success-wrapper {
     position: fixed;
@@ -191,9 +266,17 @@ margin: 100px 0px 70px;
     }
 }
 
+
+// detail page, paptop and user information
+
 .detail-page-leptop-img-wrapper{
 width: 577px;
 height: 342px;
+
+@include leptop-l{
+    width: 507px;
+    height: 302px;  
+}
 
 @include tablet{
     max-width:358px;
@@ -234,11 +317,9 @@ select{
 }
 
 
-.RedberrLogo{
-    @include tablet{
-        display: none;
-    }
-}
+
+//laptop card
+
 
 .LeptopCard{
     margin-top:55px ;
@@ -272,7 +353,46 @@ padding: 0.5rem;
 }
 
 .leptopList-wrapper{
+    padding-bottom:4rem ;
     @include tablet-l{
-    padding: 10px
+    padding: 10px;
+    padding-bottom:1rem ;
 }
 }
+
+
+
+.RedberrLogo{
+    @include tablet{
+        display: none;
+    }
+}
+
+
+.getBack{
+    position: absolute;
+    top: 1.5rem;
+    left: 3rem;
+    width: 70px;
+    height: 70px;
+    border: none;
+    padding: 1rem;
+    border-radius: 50%;
+  
+    img{
+        width: 13px;
+    }
+    @include tablet{
+        top: 1.7rem;
+        background: none;
+        left: 1rem;
+        width: 45px;
+    }
+    img{
+        width: 10px;
+    }
+
+}
+
+
+//

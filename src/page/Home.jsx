@@ -1,21 +1,21 @@
 import React, { useEffect } from 'react'
 import Cookies from 'js-cookie';
 import {Link} from "react-router-dom"
-import {Button} from "../components/Buttons"
+
+import {Button} from "../components/index"
 
 
 const Home = () => {
 
 
+  //if you return home page your information will cleared
+  
   useEffect(() =>{
     Cookies.remove("employeeInfo")
         Cookies.remove("leptopInfo")
   },[])
- 
-    
-    const doit = () => {
-      console.log("onPress");
-    }
+
+
   return (
     <div className='container d-flex h-100 ps-3 pe-3 align-center flex-column homepage' >
       <div className="text-center m-auto">
@@ -30,12 +30,12 @@ const Home = () => {
       <div className='m-auto w-100'>
         <div className='text-center w-100'>
           <Link to="Info/employeeInfo">
-      <Button text="ჩანაწერის დამატება"   press={doit} width="387px"/>
+      <Button text="ჩანაწერის დამატება"  width="387px"/>
       </Link>
       </div>
       <div className='text-center mt-3'>
-      <Link to="/leptops">
-      <Button text="ჩანაწერების სია"  press={doit} width="387px"/>
+      <Link to="/laptops">
+      <Button text="ჩანაწერების სია"   width="387px"/>
       </Link>
       </div>
       </div>

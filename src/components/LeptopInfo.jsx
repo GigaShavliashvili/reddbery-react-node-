@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
-import Cookies from "js-cookie";
-import { Button } from "./Buttons";
-import { Link } from "react-router-dom"
-import TextField from "@mui/material/TextField";
-import { useForm, Controller } from "react-hook-form";
-import { useNavigate } from "react-router";
 import axios from "axios";
-import { useSelector, useDispatch } from "react-redux"
+import Cookies from "js-cookie";
+
+import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router";
+import { useSelector, useDispatch } from "react-redux";
 import { fetchBrandsData, fetchCpusData } from "../fetchData/fetchGeneralData";
+
+import { Button, GetBackButton } from "../components/index";
+
 const LeptopInfo = () => {
   const [employeeInfo, setEmployeeInfo] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -15,12 +17,7 @@ const LeptopInfo = () => {
   const [memoryType, setMemoryType] = useState(null);
   const [condition, setCondition] = useState(null);
   const [success, setSuccess] = useState(false);
-  const navigate = useNavigate();
 
-  const dispatch = useDispatch()
-  const { brand, cpus } = useSelector((state) => state.generalData)
-
-  console.log(brand);
   const {
     handleSubmit,
     control,
@@ -30,15 +27,19 @@ const LeptopInfo = () => {
     formState: { errors },
   } = useForm({});
 
-console.log();
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
+  // laptop brand and cpus from redux
+  const { brand, cpus } = useSelector((state) => state.generalData);
 
   useEffect(() => {
-    dispatch(fetchBrandsData())
-    dispatch(fetchCpusData())
-  }, [])
+    dispatch(fetchBrandsData());
+    dispatch(fetchCpusData());
+  }, []);
 
-
-
+  //this observed your inputs and save information, after reload your infromation dont cleared
   useEffect(() => {
     const subscription = watch((value) => {
       Cookies.set("leptopInfo", JSON.stringify(value));
@@ -57,7 +58,7 @@ console.log();
       setValue(`leoptopRam`, leptopInfo.leoptopRam);
       setValue("purchaseDate", leptopInfo.purchaseDate);
       setValue("leptopPrice", leptopInfo.leptopPrice);
-      console.log(leptopInfo);
+    
     }
   }, []);
 
@@ -67,7 +68,7 @@ console.log();
       : null;
     if (employeeInfo) {
       setEmployeeInfo(employeeInfo);
-     //If  user has not filled employeeInfo, he navigate to employeeinfo page
+      //If  user has not filled employeeInfo, he navigate to employeeinfo page
     } else navigate("/info/employeeInfo");
   }, []);
 
@@ -81,7 +82,6 @@ console.log();
     brand,
     purchaseDate,
   }) => {
-
     const data = {
       name: employeeInfo.name,
       surname: employeeInfo.lastName,
@@ -89,21 +89,21 @@ console.log();
       position_id: employeeInfo.possition,
       phone_number: employeeInfo.phoneNumber,
       email: employeeInfo.email,
-      token: "23bf880685353b8b80913bfa7e38c4bf",
+      token: process.env.REACT_APP_API_TOKEN,
       laptop_name: leptopName,
       laptop_image: selectedImage,
       laptop_brand_id: brand,
       laptop_cpu: CPU,
       laptop_cpu_cores: cpuCore,
       laptop_cpu_threads: cpuFlow,
-      laptop_ram:leoptopRam,
-      laptop_hard_drive_type:  memoryType,
+      laptop_ram: leoptopRam,
+      laptop_hard_drive_type: memoryType,
       laptop_state: condition,
       laptop_price: leptopPrice,
-      laptop_purchase_date:  purchaseDate,
+      laptop_purchase_date: purchaseDate,
     };
 
-   axios({
+    axios({
       method: "POST",
       url: "https://pcfy.redberryinternship.ge/api/laptop/create",
       data: data,
@@ -112,34 +112,36 @@ console.log();
       },
     })
       .then((res) => {
-        Cookies.remove("employeeInfo")
-        Cookies.remove("leptopInfo")
-        setSuccess(true)
+        Cookies.remove("employeeInfo");
+        Cookies.remove("leptopInfo");
+        setSuccess(true);
         console.log(res);
       })
       .catch((err) => {
         console.log(err);
-      }); 
+      });
   };
 
-
   if (success) {
-    return <div className="success-wrapper" >
-      <div className="success">
-        <img src="/Frame.png" alt="succes img" />
-        <h5>ჩანაწერი დამატებულია</h5>
-        <Link to="/leptops" className="text-center w-100">
-          <Button text="სიაში გდაყვანა" width="287px"  />
-        </Link>
-        <Link className="mt-4" style={{ color: "#62A1EB" }} to="/">მთავარი</Link>
+    return (
+      <div className="success-wrapper">
+        <div className="success">
+          <img src="/Frame.png" alt="succes img" />
+          <h5>ჩანაწერი დამატებულია</h5>
+          <Link to="/laptops" className="text-center w-100">
+            <Button text="სიაში გდაყვანა" width="287px" />
+          </Link>
+          <Link className="mt-4" style={{ color: "#62A1EB" }} to="/">
+            მთავარი
+          </Link>
+        </div>
       </div>
-    </div>
+    );
   }
 
   return (
-    <div
-      className="rounded-4 h-100 mb-4 info-wrapper"
-    >
+    <div className="rounded-4 h-100 mb-4 info-wrapper">
+      <GetBackButton link="info/employeeInfo" />
       <form
         className="h-100"
         action="submit"
@@ -158,7 +160,7 @@ console.log();
             >
               {!selectedImage ? (
                 <div className="upload-wrapper">
-                     <label
+                  <label
                     className="border-0  text-light text-center pt-3 pb-3 rounded-1 custom-file-uploadforMobile"
                     htmlFor="file-upload"
                   >
@@ -188,32 +190,37 @@ console.log();
                     id="file-upload"
                     name="myImage"
                     onChange={(e) => {
-                      /*   uploadImage(e) */
-                      setSelectedImage(e.target.files[0]);
+                      if (e.target.files[0].size > 1000000) {
+                        window.alert("ფოტოს არ უნდა იყოს 1MB_ზე მეტი");
+                      } else setSelectedImage(e.target.files[0]);
                       console.log(e.target.files[0]);
                     }}
                   />
                 </div>
               ) : (
-                <div>
-                  <div className="imageFit"> 
-                  <img
-                    alt="not fount"
-                    className="img-fluid "
-                    src={URL.createObjectURL(selectedImage)}
-                  /*     src={selectedImage}  */
-                  />
+                <div className="w-100 d-flex flex-column align-items-center">
+                  <div className="imageFit">
+                    <img
+                      alt="not fount"
+                      src={URL.createObjectURL(selectedImage)}
+                    />
                   </div>
                   <div className="w-100 mt-4">
-                    <div className="mt-3 d-flex justify-content-between gap-3 w-100" >
-                      <div className="d-flex align-items-center " >
-                <img src="/SuccessUpload.png" className="" alt="" />
-                <div className="row ">
-                <span className="ms-2 col-md-5 col-12">{selectedImage.name.slice(0, 10)}... 
-                </span>
-                <span className="col-md-5 col-12 ms-3" style={{color:"gray", fontSize:"14px"}}>{Math.floor(selectedImage.size/10000)} mb</span>
-                </div>
-                </div>
+                    <div className="mt-3 d-flex justify-content-between gap-3 w-100">
+                      <div className="d-flex align-items-center ">
+                        <img src="/SuccessUpload.png" className="" alt="" />
+                        <div className="row ">
+                          <span className="ms-2 col-md-5 col-12">
+                            {selectedImage.name.slice(0, 10)}...
+                          </span>
+                          <span
+                            className="col-md-5 col-12 ms-3"
+                            style={{ color: "gray", fontSize: "14px" }}
+                          >
+                            {Math.ceil(selectedImage.size / 1000000)} mb
+                          </span>
+                        </div>
+                      </div>
                       <Button
                         text="თავიდან ატვირთვა"
                         width={"233px"}
@@ -221,70 +228,56 @@ console.log();
                       >
                         Remove
                       </Button>
-                      </div>
                     </div>
-             
+                  </div>
                 </div>
               )}
             </div>
 
             {/*Leptop Name */}
-
-            <div className="col-12 col-md-6">
+            <div
+              className={`col-12 col-md-6 input-error ${
+                errors.leptopName ? "active" : ""
+              }`}
+            >
               <label htmlFor="">ლეპტოპის სახელი</label>
-              <Controller
-                name="leptopName"
-                control={control}
-                rules={{
+
+              <input
+                style={{ width: "100%" }}
+                id="leptopName"
+                {...register("leptopName", {
                   required: true,
                   pattern: /^[A-ZA-A]/,
-                }}
-                render={({ field }) => (
-                  <TextField
-                    style={{ width: "100%" }}
-                    id="leptopName"
-                    defaultValue=""
-                    sx={{
-                      "& legend": { display: "none" },
-                      "& fieldset": { top: 0, border: "2px solid #8AC0E2" },
-                    }}
-                    inputProps={{ type: "leptopName" }}
-                    error={Boolean(errors.leptopName)}
-                    helperText={
-                      errors.leptopName
-                        ? errors.leptopName.type === "pattern"
-                          ? "გამოიყენეთ ლათინური  ასობეი"
-                          : "მიუთითეთ ლეპტოპის სახელი"
-                        : "ლათინური ასოები, ციფრები, !@#$%^&*()_+= "
-                    }
-                    {...field}
-                  ></TextField>
-                )}
-              ></Controller>
+                })}
+              />
+              <span>
+                {errors.leptopName
+                  ? errors.leptopName.type === "pattern"
+                    ? "გამოიყენეთ ლათინური  ასობეი"
+                    : "მიუთითეთ ლეპტოპის სახელი"
+                  : "ლათინური ასოები, ციფრები, !@#$%^&*()_+= "}
+              </span>
             </div>
 
             {/* select Leptop Brand */}
             <div className="col-12 col-md-6 mt-1 ">
               <div className="h-100 pt-4 pb-4">
-                <Controller
+                <select
                   name="brand"
-                  control={control}
-                  rules={{
-                    required: true,
-                  }}
-                  render={({ field }) => (
-                    <select
-                      name="brand"
-                      {...field}
-                    >
-                      <option value="">ლეპტოპის ბრენდი</option>
-                      {brand?.map((el) => (
-                        <option key={el.id} value={el.id} >
-                          {el.name}
-                        </option>))}
-                    </select>
-                  )}
-                />
+                  style={
+                    errors.brand
+                      ? { border: "1px solid red", outline: "none" }
+                      : undefined
+                  }
+                  {...register("brand", { required: true })}
+                >
+                  <option value="">ლეპტოპის ბრენდი</option>
+                  {brand?.map((el) => (
+                    <option key={el.id} value={el.id}>
+                      {el.name}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
           </div>
@@ -295,135 +288,116 @@ console.log();
             {/* select your CPU */}
             <div className="col-12 col-md-4 mt-1 mt-4">
               <div className="h-100 pt-4 pb-4">
-                <Controller
+                <select
                   name="CPU"
-                  control={control}
-                  rules={{
-                    required: true,
-                  }}
-                  render={({ field }) => (
-                    <select
-                      name="CPU"
-                      {...field}
-                    >
-                      <option value="">CPU</option>
-                      {cpus?.map((el) => (
-                        <option key={el.id} value={el.name} >
-                          {el.name}
-                        </option>))}
-                    </select>
-                  )}
-                />
+                  style={
+                    errors.CPU
+                      ? { border: "1px solid red", outline: "none" }
+                      : undefined
+                  }
+                  {...register("CPU", { required: true })}
+                >
+                  <option value="">CPU</option>
+                  {cpus?.map((el) => (
+                    <option key={el.id} value={el.name}>
+                      {el.name}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
+
             {/*CPU Core */}
-            <div className="col-12 col-md-4 mt-4">
+            <div
+              className={`col-12 col-md-4 mt-4 input-error ${
+                errors.cpuCore ? "active" : ""
+              }`}
+            >
               <label htmlFor="">CPU ბირთვი</label>
-              <Controller
-                name="cpuCore"
-                control={control}
-                rules={{
+              <input
+                style={{ width: "100%" }}
+                id="cpuCore"
+                defaultValue=""
+                {...register("cpuCore", {
                   required: true,
                   maxLength: 12,
                   minLength: 1,
                   pattern: /[0-9]/,
-                }}
-                render={({ field }) => (
-                  <TextField
-                    style={{ width: "100%" }}
-                    id="cpuCore"
-                    defaultValue=""
-                    sx={{
-                      "& legend": { display: "none" },
-                      "& fieldset": { top: 0, border: "2px solid #8AC0E2" },
-                    }}
-                    inputProps={{ type: "cpuCore" }}
-                    error={Boolean(errors.cpuCore)}
-                    helperText={
-                      errors.cpuCore
-                        ? errors.cpuCore.type === "pattern"
-                          ? "გამოიყენეთ მხოლოთ ციფრები"
-                          : "მიუთითეთ პროცესორის ბირთვების რაოდენობა"
-                        : "მხოლოდ ციფრები"
-                    }
-                    {...field}
-                  ></TextField>
-                )}
-              ></Controller>
+                })}
+              />
+              <span>
+                {errors.cpuCore
+                  ? errors.cpuCore.type === "pattern"
+                    ? "გამოიყენეთ მხოლოთ ციფრები"
+                    : "მიუთითეთ პროცესორის ბირთვების რაოდენობა"
+                  : "მხოლოდ ციფრები"}
+              </span>
             </div>
+
             {/*CPU Flow */}
-            <div className="col-12 col-md-4 mt-4">
+            <div
+              className={`col-12 col-md-4 mt-4 input-error ${
+                errors.cpuFlow ? "active" : ""
+              }`}
+            >
               <label htmlFor="">CPU ნაკადი</label>
-              <Controller
-                name="cpuFlow"
-                control={control}
-                rules={{
+              <input
+                style={{ width: "100%" }}
+                id="cpuFlow"
+                {...register("cpuFlow", {
                   required: true,
 
                   pattern: /[0-9]/,
-                }}
-                render={({ field }) => (
-                  <TextField
-                    style={{ width: "100%" }}
-                    id="cpuFlow"
-                    defaultValue=""
-                    sx={{
-                      "& legend": { display: "none" },
-                      "& fieldset": { top: 0, border: "2px solid #8AC0E2" },
-                    }}
-                    inputProps={{ type: "cpuFlow" }}
-                    error={Boolean(errors.cpuFlow)}
-                    helperText={
-                      errors.cpuFlow
-                        ? errors.cpuFlow.type === "pattern"
-                          ? "გამოიყენეთ მხოლოთ ციფრები"
-                          : "მიუთითეთ პროცესორის ნაკადი"
-                        : "მხოლოდ ციფრები"
-                    }
-                    {...field}
-                  ></TextField>
-                )}
-              ></Controller>
+                })}
+              />
+              <span>
+                {errors.cpuFlow
+                  ? errors.cpuFlow.type === "pattern"
+                    ? "გამოიყენეთ მხოლოთ ციფრები"
+                    : "მიუთითეთ პროცესორის ნაკადი"
+                  : "მხოლოდ ციფრები"}
+              </span>
             </div>
+
             {/*  Leptop RAM */}
-            <div className="col-12 col-md-6 mt-4">
+            <div
+              className={`col-12 col-md-6 mt-4 input-error ${
+                errors.leoptopRam ? "active" : ""
+              }`}
+            >
               <label htmlFor="">ლეპტოპის RAM (GB)</label>
-              <Controller
-                name="leoptopRam"
-                control={control}
-                rules={{
+              <input
+                style={{ width: "100%" }}
+                id="leoptopRam"
+                defaultValue=""
+                {...register("leoptopRam", {
                   required: true,
                   pattern: /[0-9]/,
-                }}
-                render={({ field }) => (
-                  <TextField
-                    style={{ width: "100%" }}
-                    id="leoptopRam"
-                    defaultValue=""
-                    sx={{
-                      "& legend": { display: "none" },
-                      "& fieldset": { top: 0, border: "2px solid #8AC0E2" },
-                    }}
-                    inputProps={{ type: "name" }}
-                    error={Boolean(errors.leoptopRam)}
-                    helperText={
-                      errors.leptopRam
-                        ? errors.leptopRam.type === "pattern"
-                          ? "გამოიყენეთ მხოლოთ ციფრები"
-                          : "მიუთითეთ მეხსიერება"
-                        : "მხოლოდ ციფრები"
-                    }
-                    {...field}
-                  ></TextField>
-                )}
-              ></Controller>
+                })}
+              />
+              <span>
+                {errors.leptopRam
+                  ? errors.leptopRam.type === "pattern"
+                    ? "გამოიყენეთ მხოლოთ ციფრები"
+                    : "მიუთითეთ მეხსიერება"
+                  : "მხოლოდ ციფრები"}
+              </span>
             </div>
             {/*   Memory type */}
             <div className="col-12 col-md-4 mt-4">
-              <label htmlFor="" style={errors.memoryType&& { color: "red" }}>მეხსიერების ტიპი  {errors.memoryType&& <img src="/Vector.png" alt="error icon" className="error-img" />}</label>
+              <label htmlFor="" style={errors.memoryType && { color: "red" }}>
+                მეხსიერების ტიპი{" "}
+                {errors.memoryType && (
+                  <img
+                    src="/Vector.png"
+                    alt="error icon"
+                    className="error-img"
+                  />
+                )}
+              </label>
               <div className="d-flex justify-content-around mt-3">
                 <div className="form-check">
-                  <label htmlFor="flexRadioDefault1" >
+                  <label htmlFor="flexRadioDefault1">
                     <input
                       {...register("memoryType", { required: true })}
                       type="radio"
@@ -437,7 +411,7 @@ console.log();
                   </label>
                 </div>
                 <div className="form-check">
-                  <label htmlFor="flexRadioDefault2" >
+                  <label htmlFor="flexRadioDefault2">
                     <input
                       {...register("memoryType", { required: true })}
                       type="radio"
@@ -456,81 +430,71 @@ console.log();
             <span className="line"></span>
 
             {/*  Pirchase Date */}
-            <div className="col-12 col-md-6 mt-4">
+            <div
+              className={`col-12 col-md-6 mt-4 input-error ${
+                errors.purchaseDate ? "active" : ""
+              }`}
+            >
               <label htmlFor="">შეძენის რიცხვი (არჩევით)</label>
-              <Controller
-                name="purchaseDate"
-                control={control}
-                rules={{
+              <input
+                style={{ width: "100%" }}
+                id="purchaseDate"
+                defaultValue=""
+                placeholder="წწ - თთ - დდ"
+                {...register("purchaseDate", {
                   required: false,
-                  pattern: /[0-31]+[0-12]+[0-2023]/,
-                }}
-                render={({ field }) => (
-                  <TextField
-                    style={{ width: "100%" }}
-                    id="purchaseDate"
-                    defaultValue=""
-                    placeholder="დდ/ თთ / წწ"
-                    sx={{
-                      "& legend": { display: "none" },
-                      "& fieldset": { top: 0, border: "2px solid #8AC0E2" },
-                    }}
-                    inputProps={{ type: "date" }}
-                    error={Boolean(errors.purchaseDate)}
-                    helperText={
-                      errors.purchaseDate
-                        ? errors.purchaseDate.type === "pattern"
-                          ? "მიუთითეთ სწორ ფორმატში"
-                          : "მიუთითეთ თარიღი"
-                        : "მიუთითეთ სწორ ფორმატში"
-                    }
-                    {...field}
-                  ></TextField>
-                )}
-              ></Controller>
+                  pattern:
+                    /^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/,
+                })}
+              />
+              <span>
+                {errors.purchaseDate
+                  ? errors.purchaseDate.type === "pattern"
+                    ? "მიუთითეთ სწორ ფორმატში"
+                    : "მიუთითეთ თარიღი"
+                  : "მიუთითეთ სწორ ფორმატში"}
+              </span>
             </div>
 
             {/*  Leptop  Price */}
-            <div className="col-12 col-md-6 mt-4">
+            <div
+              className={`col-12 col-md-6 mt-4 input-error ${
+                errors.leptopPrice ? "active" : ""
+              }`}
+            >
               <label htmlFor="">ლეპტოპის ფასი</label>
-              <Controller
-                name="leptopPrice"
-                control={control}
-                rules={{
+              <input
+                style={{ width: "100%" }}
+                id="leptopPrice"
+                {...register("leptopPrice", {
                   required: true,
                   pattern: /[0-9]/,
-                }}
-                render={({ field }) => (
-                  <TextField
-                    style={{ width: "100%" }}
-                    id="leptopPrice"
-                    defaultValue="00000"
-                    sx={{
-                      "& legend": { display: "none" },
-                      "& fieldset": { top: 0, border: "2px solid #8AC0E2" },
-                    }}
-                    inputProps={{ type: "number" }}
-                    error={Boolean(errors.leptopPrice)}
-                    helperText={
-                      errors.leptopPrice
-                        ? errors.leptopPrice.type === "pattern"
-                          ? "გამოიყენეთ მხოლოთ ციფრები"
-                          : "მიუთითეთ ფასი"
-                        : "მხოლოდ ციფრები"
-                    }
-                    {...field}
-                  ></TextField>
-                )}
-              ></Controller>
+                })}
+              />
+              <span>
+                {errors.leptopPrice
+                  ? errors.leptopPrice.type === "pattern"
+                    ? "გამოიყენეთ მხოლოთ ციფრები"
+                    : "მიუთითეთ ფასი"
+                  : "მხოლოდ ციფრები"}
+              </span>
             </div>
 
-        {/* leptop copndition */}
+            {/* leptop copndition */}
             <div className="col-12 col-md-4 mt-4">
-              <label htmlFor="" style={errors.condition && { color: "red" }}>ლეპტოპის მდგომარეობა 
-              {errors.condition && <img src="/Vector.png" alt="error icon" className="error-img" />} </label>
+              <label htmlFor="" style={errors.condition && { color: "red" }}>
+                ლეპტოპის მდგომარეობა
+                {errors.condition && (
+                  <img
+                    src="/Vector.png"
+                    alt="error icon"
+                    className="error-img"
+                  />
+                )}{" "}
+              </label>
               <div className="d-flex justify-content-around mt-3">
                 <div className="form-check">
-                  <label htmlFor="flexRadioDefault3" >
+                  <label htmlFor="flexRadioDefault3">
                     <input
                       {...register("condition", { required: true })}
                       type="radio"
@@ -561,7 +525,10 @@ console.log();
             </div>
           </div>
 
-          <div className="d-flex mt-4 justify-content-end">
+          <div className="d-flex mt-4 justify-content-between align-items-center">
+            <Link style={{ color: "#62A1EB" }} to="/info/employeeInfo">
+              უკან
+            </Link>
             <Button text="შემდეგი" width="174px" />
           </div>
         </div>

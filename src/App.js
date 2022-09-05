@@ -1,10 +1,10 @@
 import React from "react";
-import { ROUTER } from "./configs/router";
-import Home from "./page/Home";
-import Employee from "./page/Employee";
-import LeptopList from "./page/LeptopList";
-import LeptopDetails from "./page/LeptopDetails";
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import { ROUTER } from "./configs/router";
+
+import {Home,Information,LeptopList,LeptopDetails,NotFound} from "./page/index"
 
 
 const App = () => {
@@ -13,9 +13,10 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path={ROUTER.HOME} element={<Home />} />
-          <Route path={ROUTER.INFO} element={<Employee />} />
-          <Route path="/leptops" element={<LeptopList />} />
-          <Route path="/leptopDetails/:id" element={<LeptopDetails />} />
+          <Route path={ROUTER.INFO} element={<Information />} />
+          <Route path={ROUTER.LAPTOPS} element={<LeptopList />} />
+          <Route path={ROUTER.LAPTOPDETAILS} element={<LeptopDetails />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </div>

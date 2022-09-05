@@ -1,37 +1,24 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { ButtonWithoutBg } from "../components/Buttons";
-import {Link} from "react-router-dom"
-import LaptopCard from "../components/LaptopCard";
-import PageHeader from "../components/PageHeader";
-import { baseUrl } from "../configs/api";
-const LeptopList = () => {
-  const [leptopList, setLepotopList] = useState([]);
+import React, { useEffect } from "react";
 
-  const fetchLeptopData = () => {
-    axios({
-      url:baseUrl("/api/laptops"),
-      method: "GET",
-      params: {
-        token: "23bf880685353b8b80913bfa7e38c4bf",
-      },
-    })
-      .then((res) => {
-        setLepotopList(res.data.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+import { fetchLaptopListData } from "../fetchData/fetchLaptopData";
+
+import { useSelector,useDispatch } from "react-redux";
+
+import {LaptopCard,PageHeader,GetBackButton} from "../components/index"
+
+const LeptopList = () => {
+const dispatch = useDispatch()
+
+const  leptopList = useSelector(state => state.laptopData.laptopList)
 
   useEffect(() => {
-    fetchLeptopData();
+    dispatch(fetchLaptopListData())
   }, []);
 
-  console.log(leptopList);
-  return (
-    <div style={{ minHeight: "100vh" }}>
 
+  return (
+    <div className="ps-2 pe-2" >
+        <GetBackButton link=""/>
         <PageHeader text="ჩანაწერების სია" />
 
       <div className="row justify-content-around leptopList-wrapper">
@@ -42,7 +29,7 @@ const LeptopList = () => {
             );
           })
         ) : (
-          <h1>Loading...</h1>
+          <h1 className="mt-5 text-center">Loading...</h1>
         )}
       </div>
     </div>

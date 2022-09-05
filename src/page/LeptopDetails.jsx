@@ -1,12 +1,16 @@
-import axios from 'axios'
 import React, { useState, useEffect } from 'react'
+
+import axios from 'axios'
 import { useParams } from 'react-router-dom'
-import PageHeader from '../components/PageHeader'
 import { baseUrl } from '../configs/api'
+
 import { userInfoTitle, laptopBasicInfoTitle, cpuInfoTitle, otherInfoTitle } from '../assets/lists'
+
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchBrandsData, fetchTeamsData, fetchPositionData } from '../fetchData/fetchGeneralData'
-import List from '../components/List'
+
+import {GetBackButton,List,PageHeader} from '../components/index'
+
 const LeptopDetails = () => {
 
     const [laptop, setLaptop] = useState([])
@@ -27,20 +31,18 @@ const LeptopDetails = () => {
     const employeePosition = position.filter(el => el.id === user.position_id)
     const employeeTeam = teams.filter(el => el.id === user.team_id)
 
-    console.log(employeeTeam);
 
     const fetchLeptopDetails = () => {
         return axios({
             method: 'GET',
             url: baseUrl(`/api/laptop/${id}`),
             params: {
-                token: "23bf880685353b8b80913bfa7e38c4bf",
+                token: process.env.REACT_APP_API_TOKEN,
 
             },
         }).then((res) => {
             const { laptop, user } = res.data.data
             setLaptop(laptop)
-            console.log(laptop);
             setUser(user)
             setIsLoading(false)
 
@@ -48,8 +50,6 @@ const LeptopDetails = () => {
             console.log(err);
         })
     }
-
-
 
 
     useEffect(() => {
@@ -64,7 +64,7 @@ const LeptopDetails = () => {
     return (
         <div className='container h-100'>
             <PageHeader text="ლეპტოპის ინფო" />
-
+            <GetBackButton link="laptops"/>
             {!isLoading ? <div className='mt-5'>
                 <div className='row justify-content-center'>
                     <div className='col-12 col-md-6 mb-3 detail-page-leptop-img-wrapper'>

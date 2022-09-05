@@ -1,6 +1,7 @@
 import React from 'react'
 import {Link} from "react-router-dom"
 import { baseUrl } from '../configs/api'
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 const LaptopCard = ({item}) => {
   return (
 <div
@@ -8,9 +9,10 @@ const LaptopCard = ({item}) => {
                 style={{ maxWidth: "563px", backgroundColor:"#EAFAFF", border:"1px solid #AED1EA" }}
               >
                 <div className="LeptopListImage">
-                  <img
+                  <LazyLoadImage 
                     src={baseUrl(item.laptop.image)}
                     alt={item.laptop.name}
+                    effect="blur"
                   />
                 </div>
                 <div className="ms-4 d-flex flex-column justify-content-around pt-1 pb-4"> 

@@ -23,4 +23,22 @@ export const fetchTeamsAction = (res) =>{
      payload: res
     }
  }
+
+ export const fetchLaptopListAction= (res) =>{
+   return {
+    type: actionType.FETCH_LAPTOPSLIST_DATA,
+    payload: res
+   }
+}
+
+export const fetchLaptopDetailAction= (res) =>{
+   return {
+    type: actionType.FETCH_LAPTOPDETAILS_DATA,
+    payload: res
+   }
+}
+
+
+
+
  

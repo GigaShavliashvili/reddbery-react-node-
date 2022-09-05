@@ -1,0 +1,5 @@
+export {default as Home} from './Home'
+export {default as Information } from './Information'
+export {default as LeptopDetails} from './LeptopDetails'
+export {default as LeptopList} from './LeptopList'
+export {default as NotFound} from './NotFound'
