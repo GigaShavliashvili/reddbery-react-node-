@@ -74,8 +74,14 @@ const LeptopInfo = () => {
 
 //this for droped imagee
   const onDrop = useCallback(acceptedFiles => {
-    console.log(acceptedFiles[0]);
-   setSelectedImage(acceptedFiles[0])
+
+    if (acceptedFiles[0].size > 1000000) {
+      window.alert("ფოტოს არ უნდა იყოს 1MB_ზე მეტი");
+    } else
+    {
+      setSelectedImage(acceptedFiles[0]);
+      console.log(acceptedFiles[0]);
+    }  
   }, [])
 
   const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop,noClick: true})
