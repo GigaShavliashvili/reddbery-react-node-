@@ -6,6 +6,7 @@ import { useSelector,useDispatch } from "react-redux";
 
 import {LaptopCard,PageHeader,GetBackButton} from "../components/index"
 
+
 const LeptopList = () => {
 const dispatch = useDispatch()
 

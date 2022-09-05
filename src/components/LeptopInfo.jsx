@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useCallback } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
-
+import {useDropzone} from 'react-dropzone'
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router";
@@ -58,7 +58,7 @@ const LeptopInfo = () => {
       setValue(`leoptopRam`, leptopInfo.leoptopRam);
       setValue("purchaseDate", leptopInfo.purchaseDate);
       setValue("leptopPrice", leptopInfo.leptopPrice);
-    
+      console.log(leptopInfo);
     }
   }, []);
 
@@ -71,6 +71,14 @@ const LeptopInfo = () => {
       //If  user has not filled employeeInfo, he navigate to employeeinfo page
     } else navigate("/info/employeeInfo");
   }, []);
+
+//this for droped imagee
+  const onDrop = useCallback(acceptedFiles => {
+    console.log(acceptedFiles[0]);
+   setSelectedImage(acceptedFiles[0])
+  }, [])
+
+  const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop,noClick: true})
 
   const submitHandler = ({
     cpuCore,
@@ -159,7 +167,7 @@ const LeptopInfo = () => {
               }
             >
               {!selectedImage ? (
-                <div className="upload-wrapper">
+                <div className="upload-wrapper" {...getRootProps()}>
                   <label
                     className="border-0  text-light text-center pt-3 pb-3 rounded-1 custom-file-uploadforMobile"
                     htmlFor="file-upload"
@@ -177,6 +185,7 @@ const LeptopInfo = () => {
                   >
                     ჩააგდეთ ან ატვირთეთ ლეპტოპის ფოტო
                   </p>
+     
                   <label
                     className="border-0  text-light text-center pt-3 pb-3 rounded-1 custom-file-upload"
                     htmlFor="file-upload"
@@ -184,6 +193,7 @@ const LeptopInfo = () => {
                     ატვირთე
                   </label>
                   <input
+                  {...getInputProps()}
                     {...register("exampleRequired", { required: true })}
                     className="uploadInput"
                     type="file"
